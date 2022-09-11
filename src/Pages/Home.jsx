@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect, useState } from "react";
 import {
   Box,
+  Button,
   Container,
   Flex,
   Grid,
@@ -15,28 +17,51 @@ import {
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 import { FiFilter } from "react-icons/fi";
+import { useDispatch, useSelector } from "react-redux";
+import { getProductsData } from "../Redux/App/actions";
+import { SingleProductData } from "../Components/SingleProductData";
+import { getData, saveData } from "../Utils/LocalStorage";
 
-// filter data
+// filter data to populate
 const colors = ["Red", "Blue", "Green"];
 const gender = ["Men", "Women"];
 const prices = ["0-250rs", "251-450rs", "rs450"];
 const types = ["Polo", "Hoddie", "Basic"];
 
+// is no items in the localstorage creating an array
+const cartFromLocalStorage = getData("cart") || [];
+
 export const Home = () => {
-  // this state for radio buttons
+  const products = useSelector((state) => state.products); // getting the products data from the redux store
+  const dispatch = useDispatch();
+
+  // this states for radio buttons
   const [colorValue, setColorValue] = useState("");
   const [genderValue, setGenderValue] = useState("");
   const [priceValue, setPriceValue] = useState("");
   const [typeValue, setTypeValue] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
+  const [cart, setCart] = useState(cartFromLocalStorage); // storing the localstorage data along with new product
+
+  const handleAddToCart = (product) => {
+    // setting the cart state with product on triggering this function
+    setCart([...cart, product]);
+  };
+
+  //dispatching the action to the store
+  useEffect(() => {
+    dispatch(getProductsData()); 
+  }, []);
+
+  // adding the cart items to the local storage while changing the cart array
+  useEffect(() => {
+    saveData("cart", cart);
+  }, [cart]);
+
   return (
-    <Container maxW="100%" border="1px solid black" p="">
-      <Flex
-        border="1px solid black"
-        w={["100%", "100%", "40%", "30%"]}
-        m="auto"
-      >
+    <Container maxW="100%" p="">
+      <Flex w={["100%", "100%", "40%", "30%"]} m="auto" mt="10">
         <Input
           w={["70%", "70%", "70%"]}
           value={searchTerm}
@@ -44,6 +69,10 @@ export const Home = () => {
           placeholder="Search for products..."
           size="sm"
           colorScheme="none"
+          border="none"
+          borderBottom="1px solid "
+          rounded={false}
+          variant="unstyled"
         />
 
         <SearchIcon mt="10px" ml="10px" />
@@ -62,7 +91,7 @@ export const Home = () => {
         />
       </Flex>
 
-      <Flex ml="-15px" w="100%">
+      <Flex ml="-15px" w="100%" mt="10px">
         <Box
           pl="20px"
           w={["0%", "0%", "25%", "15%"]}
@@ -125,13 +154,47 @@ export const Home = () => {
             </Stack>
           </RadioGroup>
         </Box>
-        <Box border="2px solid red" w="85%" ml="10">
-          <Grid>
-            <GridItem>
-              <Box border="2px solid red">
-                <Image src="" alt="image" />
+
+        <Box w="85%" ml="10" h="90vh" overflow="scroll">
+          <Grid
+            gridTemplateColumns={[
+              "repeat(1,1fr)",
+              "repeat(1,1fr)",
+              "repeat(3,1fr)",
+              "repeat(3,1fr)",
+            ]}
+            gap="10"
+          >
+            {products.map((product) => (
+              <Box
+                key={product.id}
+                p="15px"
+                boxShadow="rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px"
+              >
+                <Image
+                  src={product.imageURL}
+                  alt={product.name}
+                  border="1px solid grey"
+                />
+                <Flex
+                  alignItems="center"
+                  justifyContent="space-around"
+                  pt="8px"
+                >
+                  <Text fontSize="20px">
+                    {product.currency} : {product.price}
+                  </Text>
+                  <Button
+                    bg="black"
+                    color="white"
+                    colorScheme="green"
+                    onClick={() => handleAddToCart(product)}
+                  >
+                    Add to Cart
+                  </Button>
+                </Flex>
               </Box>
-            </GridItem>
+            ))}
           </Grid>
         </Box>
       </Flex>
