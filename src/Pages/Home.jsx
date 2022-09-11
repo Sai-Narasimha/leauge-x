@@ -40,8 +40,9 @@ export const Home = () => {
   const [priceValue, setPriceValue] = useState("");
   const [typeValue, setTypeValue] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-
   const [cart, setCart] = useState(cartFromLocalStorage); // storing the localstorage data along with new product
+
+  // Functions //
 
   const handleAddToCart = (product) => {
     // setting the cart state with product on triggering this function
@@ -61,8 +62,9 @@ export const Home = () => {
   return (
     <Container maxW="100%" p="">
       <Flex w={["100%", "100%", "40%", "30%"]} m="auto" mt="10">
+        <SearchIcon mt="10px" mr="10px" />
         <Input
-          w={["70%", "70%", "70%"]}
+          w="70%"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search for products..."
@@ -73,8 +75,6 @@ export const Home = () => {
           rounded={false}
           variant="unstyled"
         />
-
-        <SearchIcon mt="10px" ml="10px" />
 
         <Icon
           as={FiFilter}
@@ -164,36 +164,48 @@ export const Home = () => {
             ]}
             gap="10"
           >
-            {products.map((product) => (
-              <Box
-                key={product.id}
-                p="15px"
-                boxShadow="rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px"
-              >
-                <Image
-                  src={product.imageURL}
-                  alt={product.name}
-                  border="1px solid grey"
-                />
-                <Flex
-                  alignItems="center"
-                  justifyContent="space-around"
-                  pt="8px"
+            {products
+              .filter((product) => {
+                if (searchTerm === "") return product;
+                else if (
+                  product.name.toLowerCase().includes(searchTerm.toLowerCase())
+                ) {
+                  return product;
+                }
+              })
+              .map((product) => (
+                <Box
+                  key={product.id}
+                  p="15px"
+                  boxShadow="rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px"
                 >
-                  <Text fontSize="20px">
-                    {product.currency} : {product.price}
+                  <Image
+                    src={product.imageURL}
+                    alt={product.name}
+                    border="1px solid grey"
+                  />
+                  <Text textAlign="center" fontWeight="bold" fontSize="18px">
+                    Name : {product.name}
                   </Text>
-                  <Button
-                    bg="black"
-                    color="white"
-                    colorScheme="green"
-                    onClick={() => handleAddToCart(product)}
+                  <Flex
+                    alignItems="center"
+                    justifyContent="space-around"
+                    pt="8px"
                   >
-                    Add to Cart
-                  </Button>
-                </Flex>
-              </Box>
-            ))}
+                    <Text fontSize="20px">
+                      {product.currency} : {product.price}
+                    </Text>
+                    <Button
+                      bg="black"
+                      color="white"
+                      colorScheme="green"
+                      onClick={() => handleAddToCart(product)}
+                    >
+                      Add to cart
+                    </Button>
+                  </Flex>
+                </Box>
+              ))}
           </Grid>
         </Box>
       </Flex>
