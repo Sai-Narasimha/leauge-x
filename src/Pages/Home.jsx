@@ -28,12 +28,11 @@ const gender = ["Men", "Women"];
 const prices = ["0-250rs", "251-450rs", "rs450"];
 const types = ["Polo", "Hoddie", "Basic"];
 
-// is no items in the localstorage creating an array
-const cartFromLocalStorage = getData("cart") || [];
-
 export const Home = () => {
   const products = useSelector((state) => state.products); // getting the products data from the redux store
   const dispatch = useDispatch();
+  // is no items in the localstorage creating an array
+  const cartFromLocalStorage = getData("cart") || [];
 
   // this states for radio buttons
   const [colorValue, setColorValue] = useState("");
@@ -46,12 +45,12 @@ export const Home = () => {
 
   const handleAddToCart = (product) => {
     // setting the cart state with product on triggering this function
-    setCart([...cart, product]);
+    setCart([...cart, { ...product, qty: 1 }]);
   };
 
   //dispatching the action to the store
   useEffect(() => {
-    dispatch(getProductsData()); 
+    dispatch(getProductsData());
   }, []);
 
   // adding the cart items to the local storage while changing the cart array
