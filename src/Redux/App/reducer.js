@@ -1,7 +1,6 @@
 import * as types from "./actionTypes";
 const intialState = {
   products: [],
-  cart: [],
   isLoading: false,
   isError: false,
 };
