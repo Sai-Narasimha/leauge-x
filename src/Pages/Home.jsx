@@ -44,8 +44,8 @@ export const Home = () => {
   const [genderVal, setGenderVal] = useState("");
   const [priceVal, setPriceVal] = useState("");
   const [typeVal, setTypeVal] = useState("");
-  // Functions //
 
+  // Functions //
   const handleCheckbox = (e) => {
     // filtering w.r.t diet and it uses redux
     const option = e.target.value;
@@ -62,12 +62,6 @@ export const Home = () => {
     // setting the cart state with product on triggering this function
     setCart([...cart, { ...product, qty: 1 }]);
   };
-  // const handleFilter = () => {
-  //   const remainingProducts = products.filter(
-  //     (prodcut) => prodcut.color === optionValue
-  //   );
-  //   console.log(remainingProducts, "remaingin", optionValue);
-  // };
 
   // changing the url with the colors using search params
   useEffect(() => {
